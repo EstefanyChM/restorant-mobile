@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "78931966784",
+    "project_id": "pushnotification-c4456"
+    
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78931966784:android:f56211f5db82e10c0258a5",
+        "android_client_info": {
+          "package_name": "com.example.riccos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBybLstNli_o_DHu1hSCPcN_bGzE6H-deU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

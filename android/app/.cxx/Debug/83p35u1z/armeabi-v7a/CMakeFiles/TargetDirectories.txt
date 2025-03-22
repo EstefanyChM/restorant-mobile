@@ -1,0 +1,2 @@
+E:/RICCOS-MULTI/RICCOS-MOVIL/riccos-v1.0/android/app/.cxx/Debug/83p35u1z/armeabi-v7a/CMakeFiles/edit_cache.dir
+E:/RICCOS-MULTI/RICCOS-MOVIL/riccos-v1.0/android/app/.cxx/Debug/83p35u1z/armeabi-v7a/CMakeFiles/rebuild_cache.dir
