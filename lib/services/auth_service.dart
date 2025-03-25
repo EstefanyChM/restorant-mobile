@@ -33,8 +33,8 @@ class AuthService with ChangeNotifier {
         url,
         headers: {"Content-Type": "application/json"},
         //body: jsonEncode({'email': email, 'password': password}),
-        body: jsonEncode(
-            {'email': 'mozo_juan@riccos.com', 'password': 'aA123456!'}),
+        body:
+            jsonEncode({'email': 'mozo_1@riccos.com', 'password': 'aA123456!'}),
       );
 
       if (response.statusCode == 200) {

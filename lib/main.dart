@@ -13,6 +13,7 @@ import 'package:riccos/services/personal_empresa_service.dart';
 import 'package:riccos/services/producto_service.dart';
 import 'package:riccos/services/promocion_service.dart';
 import 'package:riccos/services/websocket-service.dart';
+import 'package:riccos/theme/app_theme.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Módulo Pedido',
-      theme: ThemeData(
+      /*theme: ThemeData(
         primaryColor: Colors.amber, // Cambia este color según lo que desees
         scaffoldBackgroundColor: Colors.white,
         colorScheme: ColorScheme.light(
@@ -67,7 +68,10 @@ class MyApp extends StatelessWidget {
           indicatorColor: Colors.white, // Color del indicador
           indicatorSize: TabBarIndicatorSize.label,
         ),
-      ),
+      ),*/
+      theme: AppTheme.lightTheme(context),
+      // Dark theme is inclided in the Full template
+      themeMode: ThemeMode.light,
       onGenerateRoute: router.generateRoute,
       initialRoute: logInScreenRoute,
     );

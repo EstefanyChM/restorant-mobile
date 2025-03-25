@@ -39,7 +39,7 @@ class _EntryPointState extends State<EntryPoint> {
         ),
         body: Column(
           children: [
-            SectionConnection(), // Agregamos la sección de conexión
+            //SectionConnection(), // Agregamos la sección de conexión
             Expanded(
               // Permite que el contenido principal ocupe el espacio restante
               child: PageTransitionSwitcher(
