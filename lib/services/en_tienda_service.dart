@@ -1,90 +1,87 @@
-import 'dart:convert';
-
 import 'package:riccos/core/api_constants.dart';
 import 'package:riccos/models/en_tienda_request_model.dart';
 import 'package:riccos/models/en_tienda_response_model.dart';
 import 'package:riccos/models/pedido_mesa_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:riccos/services/auth_service.dart';
 
 class EnTiendaService {
   final AuthService authService;
+  final Dio _dio = Dio();
 
   EnTiendaService(this.authService);
 
   Future<List<PedidoMesaModel>> getPedidoMesa() async {
-    final url = Uri.parse('${ApiConstants.enTienda}pedido-mesa');
     final token = await authService.getToken();
 
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-    );
+    try {
+      final response = await _dio.get(
+        '${ApiConstants.enTienda}pedido-mesa',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      try {
-        final List data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final List data = response.data;
         return data
             .map((pedidoMesa) => PedidoMesaModel.fromJson(pedidoMesa))
             .toList();
-      } catch (e) {
-        throw Exception('Error al procesar la respuesta: $e');
+      } else {
+        throw Exception(
+            'Error al obtener el pedido mesa: ${response.statusCode}');
       }
-    } else {
-      throw Exception(
-          'Error al obtener el pedido mesa: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
     }
   }
 
   Future<EnTiendaResponseModel> finalizarPedido(int id) async {
-    final url = Uri.parse('${ApiConstants.enTienda}finalizar/$id');
     final token = await authService.getToken();
 
-    final response = await http.patch(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode({}), // Aquí puedes pasar cualquier dato si es necesario
-    );
+    try {
+      final response = await _dio.patch(
+        '${ApiConstants.enTienda}finalizar/$id',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
+        ),
+        data: {}, // Puedes agregar datos aquí si es necesario
+      );
 
-    if (response.statusCode == 200) {
-      try {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-
-        return EnTiendaResponseModel.fromJson(data);
-      } catch (e) {
-        throw Exception('Error al procesar la respuesta: $e');
+      if (response.statusCode == 200) {
+        return EnTiendaResponseModel.fromJson(response.data);
+      } else {
+        throw Exception('Error al finalizar el pedido: ${response.statusCode}');
       }
-    } else {
-      throw Exception('Error al finalizar el pedido: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
     }
   }
 
   Future<EnTiendaResponseModel> create(EnTiendaRequestModel request) async {
     final idUser = await authService.getIdUsuario();
-    final url = Uri.parse(
-        "${ApiConstants.enTienda}?idUser=$idUser"); // Agrega el ID a la URL
     final token = await authService.getToken();
 
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          if (token != null) 'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(
-            request.toJson()), // Convertir EnTiendaRequestModel a JSON
+      final response = await _dio.post(
+        "${ApiConstants.enTienda}?idUser=$idUser",
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
+        ),
+        data: request.toJson(), // Convierte EnTiendaRequestModel a JSON
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        return EnTiendaResponseModel.fromJson(data);
+        return EnTiendaResponseModel.fromJson(response.data);
       } else {
         throw Exception('Error al crear el pedido: ${response.statusCode}');
       }

@@ -1,60 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
-const Color primaryColor = Color(0xFF321E00);
-const Color secondaryColor = Color.fromARGB(255, 255, 190, 68);
-const Color tertiaryColor = Color(0xFFFF6432);
-/**************** */
-const Color primaryColorS = Color.fromARGB(255, 223, 174, 111);
-const Color secondaryColorS = Color.fromARGB(255, 255, 243, 220);
-const Color tertiaryColorS = Color.fromARGB(255, 255, 181, 156);
+// Colores principales
+const Color primaryColor = Color(0xFF321E00); // Marrón oscuro
+const Color secondaryColor = Color(0xFFFFC864); // Amarillo anaranjado
+const Color tertiaryColor = Color(0xFFFF6432); // Naranja rojizo
 
-const MaterialColor primaryMaterialColor =
-    MaterialColor(0xFF9581FF, <int, Color>{
-  50: Color(0xFFEFECFF),
-  100: Color(0xFFD7D0FF),
-  200: Color(0xFFBDB0FF),
-  300: Color(0xFFA390FF),
-  400: Color(0xFF8F79FF),
-  500: Color(0xFF7B61FF),
-  600: Color(0xFF7359FF),
-  700: Color(0xFF684FFF),
-  800: Color(0xFF5E45FF),
-  900: Color(0xFF6C56DD),
-});
+// Tonos más claros
+const Color primaryLight = Color(0xFF6E5537); // Marrón más claro
+const Color secondaryLight = Color(0xFFFFDC96); // Amarillo pastel
+const Color tertiaryLight = Color(0xFFFFA06E); // Naranja suave
 
-const Color blackColor = Color(0xFF16161E);
-const Color blackColor80 = Color(0xFF45454B);
-const Color blackColor60 = Color(0xFF737378);
-const Color blackColor40 = Color(0xFFA2A2A5);
-const Color blackColor20 = Color(0xFFD0D0D2);
-const Color blackColor10 = Color(0xFFE8E8E9);
-const Color blackColor5 = Color(0xFFF3F3F4);
+// Color especial
+const Color superColor = Color(0xFFFFF5E9); // Crema muy claro
+
+// Tonos de negro y blanco adaptados
+const Color blackColor = Color(0xFF161616);
+const Color blackColor80 = Color(0xFF383838);
+const Color blackColor60 = Color(0xFF5C5C5C);
+const Color blackColor40 = Color(0xFF8A8A8A);
+const Color blackColor20 = Color(0xFFB8B8B8);
+const Color blackColor10 = Color(0xFFDCDCDC);
+const Color blackColor5 = Color(0xFFEFEFEF);
 
 const Color whiteColor = Colors.white;
-const Color whileColor80 = Color(0xFFCCCCCC);
-const Color whileColor60 = Color(0xFF999999);
-const Color whileColor40 = Color(0xFF666666);
-const Color whileColor20 = Color(0xFF333333);
-const Color whileColor10 = Color(0xFF191919);
-const Color whileColor5 = Color(0xFF0D0D0D);
+const Color whiteColor80 = Color(0xFFDDDDDD);
+const Color whiteColor60 = Color(0xFFBBBBBB);
+const Color whiteColor40 = Color(0xFF999999);
+const Color whiteColor20 = Color(0xFF777777);
+const Color whiteColor10 = Color(0xFF555555);
+const Color whiteColor5 = Color(0xFF333333);
 
+// Tonos de gris adecuados a la paleta
 const Color greyColor = Color(0xFFB8B5C3);
-const Color lightGreyColor = Color(0xFFF8F8F9);
-const Color darkGreyColor = Color(0xFF1C1C25);
-// const Color greyColor80 = Color(0xFFC6C4CF);
-// const Color greyColor60 = Color(0xFFD4D3DB);
-// const Color greyColor40 = Color(0xFFE3E1E7);
-// const Color greyColor20 = Color(0xFFF1F0F3);
-// const Color greyColor10 = Color(0xFFF8F8F9);
-// const Color greyColor5 = Color(0xFFFBFBFC);
+const Color lightGreyColor = Color(0xFFF2F2F2);
+const Color darkGreyColor = Color(0xFF2A2A2A);
 
-const Color purpleColor = Color(0xFF7B61FF);
-const Color successColor = Color(0xFF2ED573);
-const Color warningColor = Color(0xFFFFBE21);
-const Color errorColor = Color(0xFFEA5B5B);
+// Colores de estado
+const Color successColor = Color.fromARGB(255, 112, 175, 40); // Verde éxito
+const Color warningColor = Color(0xFFFFBE21); // Amarillo advertencia
+const Color errorColor = Color.fromARGB(255, 228, 41, 17); // Rojo error
 
-const double defaultPadding = 16.0;
+// MaterialColor para el color primario
+const MaterialColor primaryMaterialColor =
+    MaterialColor(0xFFFFD8A8, <int, Color>{
+  50: Color(0xFFFFF5E9), // Color más claro
+  100: Color(0xFFFFE5C4),
+  200: Color(0xFFFFD39E),
+  300: Color(0xFFFFBF78),
+  400: Color(0xFFFFAB52),
+  500: Color(0xFFFF972C), // Color principal
+  600: Color(0xFFD67824),
+  700: Color(0xFFAD5D1C),
+  800: Color(0xFF854314),
+  900: Color(0xFF321E00), // Color más oscuro
+});
+
+const double defaultPadding = 20.0;
 const double defaultBorderRadious = 10.0;
 const Duration defaultDuration = Duration(milliseconds: 300);
 

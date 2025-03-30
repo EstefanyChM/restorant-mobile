@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:riccos/constants.dart';
 import 'package:riccos/entry_point.dart';
 import 'package:riccos/models/pedido_mesa_model.dart';
 import 'package:riccos/providers/pedido_provider.dart';
-import 'package:riccos/screens/categoria/views/categoria_screen.dart';
+import 'package:riccos/route/screen_export.dart';
 import 'package:riccos/screens/historial-mesa/historia_pedido_mesa_screen.dart';
 import 'package:riccos/screens/resumen/resumen_pedido_screen.dart';
+
 import 'package:riccos/section-connection.dart';
 
 class MenuPedidooo extends StatelessWidget {
@@ -17,10 +19,37 @@ class MenuPedidooo extends StatelessWidget {
     bool isHistorialEnabled = pedidoMesa.idPedido != null;
 
     final List<Tab> tabs = [
-      const Tab(icon: Icon(Icons.home_rounded), text: "Seleccionar"),
-      const Tab(icon: Icon(Icons.shopping_bag_rounded), text: "Resumen"),
+      const Tab(
+        icon: Icon(
+          Icons.home_rounded,
+          size: 40,
+        ),
+        child: Text(
+          "Seleccionar",
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
+      const Tab(
+        icon: Icon(
+          Icons.shopping_bag_rounded,
+          size: 40,
+        ),
+        child: Text(
+          "Resumen",
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
       if (isHistorialEnabled)
-        const Tab(icon: Icon(Icons.person), text: "Historial"),
+        const Tab(
+          icon: Icon(
+            Icons.person,
+            size: 40,
+          ),
+          child: Text(
+            "Historial",
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
     ];
 
     final List<Widget> tabViews = [
@@ -34,9 +63,13 @@ class MenuPedidooo extends StatelessWidget {
       child: SafeArea(
         child: Scaffold(
             appBar: AppBar(
-              backgroundColor: secondaryColor,
+              backgroundColor: tertiaryLight,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: primaryColor,
+                  size: 30, // Ajusta el tamaño aquí
+                ),
                 onPressed: () {
                   pedidoProvider.pedidos.clear();
                   Navigator.pushAndRemoveUntil(
@@ -49,27 +82,31 @@ class MenuPedidooo extends StatelessWidget {
                 },
               ),
               title: const Text(
-                "VOLVER A MESAS",
-                style: TextStyle(color: Colors.white),
+                'Volver a mesas',
+                style: TextStyle(color: primaryColor, fontSize: 30),
               ),
-              centerTitle: true,
-              elevation: 0, // Opcional: elimina la sombra del AppBar
+              // centerTitle: true,
             ),
             body: Column(
               children: [
                 SectionConnection(),
                 Expanded(
                   child: NestedScrollView(
-                    headerSliverBuilder:
-                        (BuildContext context, bool innerBoxIsScrolled) {
+                    headerSliverBuilder: (
+                      BuildContext context,
+                      bool innerBoxIsScrolled,
+                    ) {
                       return <Widget>[
                         SliverPersistentHeader(
                           delegate: _SliverAppBarDelegate(
                             TabBar(
                               indicatorSize: TabBarIndicatorSize.label,
-                              labelColor: tertiaryColor,
-                              unselectedLabelColor: tertiaryColorS,
+                              labelColor: primaryMaterialColor[700],
+                              unselectedLabelColor: primaryMaterialColor[400],
                               indicatorColor: tertiaryColor,
+                              indicatorWeight: 3,
+                              dividerColor: secondaryColor,
+                              dividerHeight: 3,
                               tabs: tabs,
                             ),
                           ),
@@ -102,6 +139,9 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Material(
+      elevation: 10,
+      shadowColor: secondaryColor,
+      color: secondaryLight,
       child: _tabBar,
     );
   }

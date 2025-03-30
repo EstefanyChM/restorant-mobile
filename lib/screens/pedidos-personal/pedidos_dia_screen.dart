@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:riccos/models/pedido_del_usuario_response.dart';
 import 'package:riccos/services/api_service.dart';

@@ -1,13 +1,12 @@
-import 'dart:convert';
-
 import 'package:riccos/core/api_constants.dart';
 import 'package:riccos/models/pedido_del_usuario_response.dart';
 import 'package:riccos/models/pedido_model.dart';
 import 'package:riccos/services/auth_service.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class PedidoService {
   final AuthService authService;
+  final Dio _dio = Dio();
 
   PedidoService(this.authService);
 
@@ -16,66 +15,69 @@ class PedidoService {
     DateTime? fechaInicio,
     DateTime? fechaFin,
   }) async {
-    final idUser =
-        await authService.getIdUsuario(); // Obtiene el ID del usuario
-    final url = Uri.parse(
-        "${ApiConstants.pedido}pedidos-filtrado?idUser=$idUser&idProducto=${idProducto ?? ''}&fechaInicio=${fechaInicio?.toIso8601String() ?? ''}&fechaFin=${fechaFin?.toIso8601String() ?? ''}");
+    final idUser = await authService.getIdUsuario();
+    final queryParams = {
+      'idUser': idUser.toString(),
+      if (idProducto != null) 'idProducto': idProducto.toString(),
+      if (fechaInicio != null) 'fechaInicio': fechaInicio.toIso8601String(),
+      if (fechaFin != null) 'fechaFin': fechaFin.toIso8601String(),
+    };
 
-    final response = await http.get(url);
+    try {
+      final response = await _dio.get(
+        "${ApiConstants.pedido}pedidos-filtrado",
+        queryParameters: queryParams,
+      );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data
-          .map((json) => PedidoDelUsuarioResponse.fromJson(json))
-          .toList();
-    } else {
-      throw Exception('Error al obtener pedidos');
+      if (response.statusCode == 200) {
+        final List data = response.data;
+        return data
+            .map((json) => PedidoDelUsuarioResponse.fromJson(json))
+            .toList();
+      } else {
+        throw Exception('Error al obtener pedidos: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
     }
   }
 
   Future<List<PedidoModel>> getPedido() async {
-    final url = Uri.parse(ApiConstants.pedido);
-    final response = await http.get(url);
+    try {
+      final response = await _dio.get(ApiConstants.pedido);
 
-    if (response.statusCode == 200) {
-      try {
-        // Decodificamos la respuesta JSON y asumimos que es una lista
-        final List data = jsonDecode(response.body);
-
-        // Convertimos la lista JSON en una lista de objetos PedidoMesaModel
+      if (response.statusCode == 200) {
+        final List data = response.data;
         return data.map((pedido) => PedidoModel.fromJson(pedido)).toList();
-      } catch (e) {
-        throw Exception('Error al procesar la respuesta: $e');
+      } else {
+        throw Exception('Error al obtener el pedido: ${response.statusCode}');
       }
-    } else {
-      throw Exception(
-          'Error al obtener el pedido mesa: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
     }
   }
 
   Future<PedidoModel> getPedidoById(int idPedido) async {
-    final url = Uri.parse('${ApiConstants.pedido}$idPedido');
     final token = await authService.getToken();
 
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-    );
+    try {
+      final response = await _dio.get(
+        '${ApiConstants.pedido}$idPedido',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      try {
-        // Decodificamos la respuesta JSON
-        final data = jsonDecode(response.body);
-        // Convertimos la respuesta JSON en un objeto PedidoModel
-        return PedidoModel.fromJson(data);
-      } catch (e) {
-        throw Exception('Error al procesar la respuesta: $e');
+      if (response.statusCode == 200) {
+        return PedidoModel.fromJson(response.data);
+      } else {
+        throw Exception('Error al obtener el pedido: ${response.statusCode}');
       }
-    } else {
-      throw Exception('Error al obtener el pedido: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
     }
   }
 }

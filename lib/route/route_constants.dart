@@ -61,3 +61,4 @@ const String historialPedidoMesaScreenRoute = "historia_pedido_mesa_screen";
 const String resumenPedidoScreenRoute = "resumen_pedido_screen";
 const String menuPedidoooScreenRoute = "menu_pedidooo";
 const String productDetailsScreenRoute = "product_details_screen";
+const String editProfileScreenRoute = "edit_profile_screen";

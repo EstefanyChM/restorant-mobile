@@ -9,7 +9,7 @@ import 'package:riccos/route/router.dart' as router;
 import 'package:riccos/services/categoria_service.dart';
 import 'package:riccos/services/en_tienda_service.dart';
 import 'package:riccos/services/pedido_service.dart';
-import 'package:riccos/services/personal_empresa_service.dart';
+import 'package:riccos/services/usuario_sistema_service.dart';
 import 'package:riccos/services/producto_service.dart';
 import 'package:riccos/services/promocion_service.dart';
 import 'package:riccos/services/websocket-service.dart';
@@ -33,7 +33,7 @@ void main() {
             create: (context) => PedidoService(context.read<AuthService>())),
         Provider(
             create: (context) =>
-                PersonalEmpresaService(context.read<AuthService>())),
+                UsuarioSistemaService(context.read<AuthService>())),
         ChangeNotifierProvider(create: (_) => WebsocketService()),
         //Provider(create: (context) => ProductoService ()),
       ],
@@ -70,7 +70,6 @@ class MyApp extends StatelessWidget {
         ),
       ),*/
       theme: AppTheme.lightTheme(context),
-      // Dark theme is inclided in the Full template
       themeMode: ThemeMode.light,
       onGenerateRoute: router.generateRoute,
       initialRoute: logInScreenRoute,

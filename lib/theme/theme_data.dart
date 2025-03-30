@@ -6,7 +6,7 @@ const AppBarTheme appBarLightTheme = AppBarTheme(
   elevation: 0,
   iconTheme: IconThemeData(color: Colors.black),
   titleTextStyle: TextStyle(
-    fontSize: 16,
+    fontSize: 50,
     fontWeight: FontWeight.w500,
     color: Colors.black,
   ),
@@ -17,7 +17,7 @@ const AppBarTheme appBarDarkTheme = AppBarTheme(
   elevation: 0,
   iconTheme: IconThemeData(color: Colors.white),
   titleTextStyle: TextStyle(
-    fontSize: 16,
+    fontSize: 70,
     fontWeight: FontWeight.w500,
     color: Colors.white,
   ),
@@ -35,7 +35,7 @@ DataTableThemeData dataTableLightThemeData = DataTableThemeData(
     border: Border.all(color: Colors.black12),
   ),
   dataTextStyle: const TextStyle(
-    fontSize: 12,
+    fontSize: 60,
     fontWeight: FontWeight.w500,
     color: Colors.black,
   ),
@@ -51,6 +51,6 @@ DataTableThemeData dataTableDarkThemeData = DataTableThemeData(
   dataTextStyle: const TextStyle(
     fontWeight: FontWeight.w500,
     color: Colors.white,
-    fontSize: 12,
+    fontSize: 50,
   ),
 );

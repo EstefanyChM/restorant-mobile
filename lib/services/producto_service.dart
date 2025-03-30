@@ -1,74 +1,57 @@
-import 'dart:convert';
-
 import 'package:riccos/core/api_constants.dart';
 import 'package:riccos/models/generic_filter_model.dart';
 import 'package:riccos/models/producto_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class ProductoService {
+  final Dio _dio = Dio();
   List<ProductoModel> _cachedListProduct = [];
 
-  Future<List<ProductoModel>> getAll({idCategoria}) async {
-    /* 
-    TODO: la lista cambia dependiendo del la categoría 
-     */
-    //if (_cachedListProduct.isNotEmpty) {
-    //  return _cachedListProduct;
-    //}
+  Future<List<ProductoModel>> getAll({int? idCategoria}) async {
+    try {
+      final response = await _dio.get(
+        ApiConstants.producto,
+        queryParameters: {
+          'activo': 'true',
+          'disponible': 'true',
+          if (idCategoria != null) 'idCategoria': idCategoria.toString(),
+        },
+      );
 
-    // Construir la URL con los parámetros opcionales
-    final url = Uri.parse(ApiConstants.producto).replace(
-      queryParameters: {
-        'activo': 'true',
-        'disponible': 'true',
-        'idCategoria': idCategoria.toString(),
-      },
-    );
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      try {
-        final List<dynamic> data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final List data = response.data;
         _cachedListProduct =
             data.map((producto) => ProductoModel.fromJson(producto)).toList();
         return _cachedListProduct;
-      } catch (e) {
-        throw Exception('Error al procesar la respuesta: $e');
+      } else {
+        throw Exception(
+            'Error al obtener los productos: ${response.statusCode}');
       }
-    } else {
-      throw Exception(
-          'Error al obtener los productos de la categoria: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
     }
   }
 
   Future<GenericFilterResponse<ProductoModel>> genericFilter(
       GenericFilterRequest request) async {
-    final url = Uri.parse(
-        '${ApiConstants.producto}filter'); // Construcción de la URL con la ruta 'filter'
+    try {
+      final response = await _dio.post(
+        '${ApiConstants.producto}filter',
+        data: request.toJson(),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
 
-    // Realizamos la solicitud HTTP POST
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(request.toJson()), // Convertimos la solicitud a JSON
-    );
-
-    if (response.statusCode == 200) {
-      try {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-
-        // Deserializamos la respuesta usando GenericFilterResponse
+      if (response.statusCode == 200) {
+        final data = response.data;
         return GenericFilterResponse<ProductoModel>.fromJson(
           data,
-          (json) => ProductoModel.fromJson(
-              json), // Función para convertir cada item a ProductoModel
+          (json) => ProductoModel.fromJson(json),
         );
-      } catch (e) {
-        throw Exception('Error al procesar la respuesta: $e');
+      } else {
+        throw Exception('Error al filtrar productos: ${response.statusCode}');
       }
-    } else {
-      throw Exception(
-          'Error al realizar la solicitud de filtro: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
     }
   }
 }

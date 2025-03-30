@@ -78,7 +78,7 @@ class _ResumenPedidoScreenState extends State<ResumenPedidoScreen> {
                 'Pedido de la mesa: ${widget.pedidoMesa.idMesa} Enviado',
                 style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold),
               ),
               backgroundColor: Colors.green,
@@ -129,10 +129,11 @@ class _ResumenPedidoScreenState extends State<ResumenPedidoScreen> {
                 'Pedido de la mesa: ${widget.pedidoMesa.idMesa} Enviado',
                 style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold),
               ),
-              backgroundColor: Colors.green,
+
+              backgroundColor: successColor,
               behavior:
                   SnackBarBehavior.floating, // Lo hace flotar en la pantalla
               shape: RoundedRectangleBorder(
@@ -171,7 +172,7 @@ class _ResumenPedidoScreenState extends State<ResumenPedidoScreen> {
           ? null // Desactiva el botón si no hay productos
           : CartButton(
               price: pedidoProvider.totalPedidos,
-              title: "Mandar Pedido",
+              title: "Hacer Pedido",
               subTitle: "Total",
               press: () => confirmarPedido(),
             ),
@@ -180,13 +181,35 @@ class _ResumenPedidoScreenState extends State<ResumenPedidoScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Mesa N° : ${widget.pedidoMesa.idMesa}",
-              style: const TextStyle(
-                fontSize: 18, // Tamaño de fuente
-                fontWeight: FontWeight.bold, // Negrita
-                color: primaryColor, // Color del texto
+            Row(children: [
+              const Text(
+                "Mesa N° : ",
+                style: TextStyle(
+                  fontSize: 20, // Tamaño de fuente
+                  fontWeight: FontWeight.bold, // Negrita
+                  color: primaryColor, // Color del texto
+                ),
               ),
+              Container(
+                width: defaultPadding * 2,
+                height: defaultPadding * 2,
+                decoration: const BoxDecoration(
+                  color: secondaryColor,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '${widget.pedidoMesa.idMesa}',
+                  style: const TextStyle(
+                    color: primaryColor,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ]),
+            const SizedBox(
+              height: defaultPadding,
             ),
             Expanded(
               child: pedidoProvider.pedidos.isEmpty
@@ -202,32 +225,66 @@ class _ResumenPedidoScreenState extends State<ResumenPedidoScreen> {
                       itemCount: pedidoProvider.pedidos.length,
                       itemBuilder: (context, index) {
                         final producto = pedidoProvider.pedidos[index];
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: ListTile(
-                            title: Text(producto.producto.nombre),
-                            subtitle: Text('Cantidadx: ${producto.cantidad}'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'S./ ${producto.precioXCant}',
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight:
-                                          FontWeight.bold), // Tamaño más grande
+                        return Padding(
+                            padding: const EdgeInsets.all(defaultPadding / 2),
+                            child: Card(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(defaultBorderRadious),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  producto.producto.nombre,
+                                  style: TextStyle(fontSize: 20),
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.red),
-                                  onPressed: () => eliminarProducto(index),
+                                subtitle: Text(
+                                  'Cantidadx: ${producto.cantidad}',
+                                  style: TextStyle(fontSize: 18),
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'S./ ',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium!
+                                                .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: primaryLight,
+                                                ),
+                                          ),
+                                          TextSpan(
+                                            text: producto.precioXCant
+                                                .toStringAsFixed(
+                                                    2), // Valor por defecto
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineMedium!
+                                                .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: primaryColor,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: errorColor,
+                                        size: 30,
+                                      ),
+                                      onPressed: () => eliminarProducto(index),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ));
                       },
                     ),
             ),

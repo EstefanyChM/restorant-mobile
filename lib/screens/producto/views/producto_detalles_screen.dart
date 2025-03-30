@@ -53,12 +53,13 @@ class _ProductoDetallesScreenState extends State<ProductoDetallesScreen> {
         content: Text(
           '${widget.producto.nombre} agregado al carrito',
           style: const TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.green[300],
+        backgroundColor: successColor,
         behavior: SnackBarBehavior.floating, // Lo hace flotar en la pantalla
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10), // Bordes redondeados
+          borderRadius:
+              BorderRadius.circular(defaultBorderRadious), // Bordes redondeados
         ),
         margin: const EdgeInsets.symmetric(
             horizontal: 20, vertical: 10), // Margen alrededor
@@ -91,8 +92,7 @@ class _ProductoDetallesScreenState extends State<ProductoDetallesScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: defaultPadding,
-            ),
+                horizontal: defaultPadding, vertical: defaultPadding),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -105,8 +105,7 @@ class _ProductoDetallesScreenState extends State<ProductoDetallesScreen> {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                  ), // Espaciado interno
+                      horizontal: 15), // Espaciado interno
                   decoration: BoxDecoration(
                     color: primaryColor,
                     borderRadius: BorderRadius.circular(50),
@@ -115,7 +114,7 @@ class _ProductoDetallesScreenState extends State<ProductoDetallesScreen> {
                     widget.producto.nombre,
                     style: const TextStyle(
                       fontSize: 30,
-                      color: Colors.white,
+                      color: superColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -129,34 +128,39 @@ class _ProductoDetallesScreenState extends State<ProductoDetallesScreen> {
                 padding: const EdgeInsets.all(defaultPadding),
                 child: Column(
                   children: [
-                    // Imagen del producto con tamaño ajustado
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        widget.producto.urlImagen,
-                        height: 250,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Fila con precio y cantidad
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Stack(
                       children: [
-                        Expanded(
+                        ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(defaultBorderRadious * 4),
+                          child: Image.network(
+                            widget.producto.urlImagen,
+                            height: 250,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          top: 25,
+                          left: 25,
                           child: UnitPrice(
                             price: widget.producto.precio,
                           ),
-                        ),
-                        ProductQuantity(
-                          stock: widget.producto.stock,
-                          onQuantityChanged:
-                              updateQuantity, // Pasamos la función
-                        ),
+                        )
                       ],
                     ),
+                    const SizedBox(
+                      height: defaultPadding,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ProductQuantity(
+                          stock: widget.producto.stock,
+                          onQuantityChanged: updateQuantity,
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

@@ -10,11 +10,11 @@ class AppTheme {
   static ThemeData lightTheme(BuildContext context) {
     return ThemeData(
       brightness: Brightness.light,
-      fontFamily: "Plus Jakarta",
-      primarySwatch: primaryMaterialColor,
-      primaryColor: primaryColor,
-      scaffoldBackgroundColor: Colors.white,
-      iconTheme: const IconThemeData(color: blackColor),
+      fontFamily: "Inter",
+      primarySwatch: Colors.blue,
+      primaryColor: Colors.green,
+      scaffoldBackgroundColor: superColor,
+      iconTheme: const IconThemeData(color: tertiaryColor),
       textTheme: const TextTheme(
         bodyMedium: TextStyle(color: blackColor40),
       ),
@@ -23,7 +23,7 @@ class AppTheme {
       outlinedButtonTheme: outlinedButtonTheme(),
       inputDecorationTheme: lightInputDecorationTheme,
       checkboxTheme: checkboxThemeData.copyWith(
-        side: const BorderSide(color: blackColor40),
+        side: const BorderSide(color: Color.fromARGB(255, 2, 19, 252)),
       ),
       appBarTheme: appBarLightTheme,
       scrollbarTheme: scrollbarThemeData,

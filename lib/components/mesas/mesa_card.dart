@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:riccos/entry_point.dart';
 import 'package:riccos/route/screen_export.dart';
+import 'package:riccos/services/en_tienda_service.dart';
 import 'package:riccos/services/websocket-service.dart';
 import '../../constants.dart';
 import '../../models/pedido_mesa_model.dart';
 import 'package:riccos/route/route_constants.dart';
-import 'package:riccos/services/api_service.dart';
 
 class MesaCard extends StatelessWidget {
   const MesaCard({
@@ -19,77 +21,90 @@ class MesaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool tienePedido = pedidoMesa.idPedido != null;
-    final Color colorContenido = tienePedido ? tertiaryColor : tertiaryColorS;
+    final Color colorContenido = tienePedido ? secondaryColor : secondaryLight;
 
     return ClipRRect(
-      borderRadius:
-          BorderRadius.circular(20), // Asegura que los bordes sean redondeados
+      borderRadius: BorderRadius.circular(defaultBorderRadious),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        // mainAxisSize: MainAxisSize.min,
         children: [
           Expanded(
             flex: 1,
             child: Container(
-              color: primaryColor,
-              child: Center(
-                child: Text(
-                  'Mesa ${pedidoMesa.nroMesa}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+                color: primaryColor,
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: defaultPadding * 2,
+                      height: defaultPadding * 2,
+                      decoration: const BoxDecoration(
+                        color: secondaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${pedidoMesa.nroMesa}',
+                        style: const TextStyle(
+                          color: primaryColor,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: defaultPadding * 3,
+                    ),
+                    if (pedidoMesa.total != null) ...[
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'S./ ',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: secondaryColor,
+                                  ),
+                            ),
+                            TextSpan(
+                              text: (pedidoMesa.total ?? 0.00)
+                                  .toStringAsFixed(2), // Valor por defecto
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: superColor,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ] else ...[
+                      const Text(
+                        'Libre',
+                        style: TextStyle(
+                            color: successColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25),
+                      ),
+                    ],
+                  ],
+                )),
           ),
           Expanded(
             flex: 3,
             child: Container(
-              color: colorContenido, // Fondo del contenedor
-              padding: EdgeInsets.all(10), // Espaciado interno
+              color: colorContenido,
+              padding: EdgeInsets.all(10),
               child: Column(
-                mainAxisSize: MainAxisSize.min, // Ajusta el tamaño al contenido
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (pedidoMesa.total != null) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        /*const Text(
-                          'Total: ',
-                          style: TextStyle(
-                              color: tertiaryColorS,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10),
-                        ),*/
-                        Text(
-                          'S./ ${pedidoMesa.total!.toStringAsFixed(2)}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ] else ...[
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Libre',
-                          style: TextStyle(
-                              color: tertiaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25),
-                        ),
-                      ],
-                    ),
-                  ],
-
-                  const SizedBox(height: 5),
-                  // Botón para agregar o iniciar pedido
+                  const SizedBox(height: defaultPadding / 4),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamed(
@@ -99,21 +114,47 @@ class MesaCard extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: secondaryColor),
+                        elevation: 5,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: defaultPadding / 1.5,
+                        ),
+                        backgroundColor: successColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                defaultBorderRadious * 4))),
                     child: Text(
                       tienePedido ? 'Agregar Pedido' : 'Iniciar Pedido',
+                      textAlign: TextAlign.center,
+                      softWrap: true,
+                      maxLines: 2,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(color: superColor),
                     ),
                   ),
-                  const SizedBox(height: 5), // Espaciado entre elementos
-
-                  // Botón para finalizar pedido
-                  ElevatedButton(
-                    onPressed:
-                        tienePedido ? () => _finalizarPedido(context) : null,
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: secondaryColorS),
-                    child: const Text('Finalizar'),
+                  const SizedBox(
+                    height: defaultPadding,
                   ),
+                  ElevatedButton(
+                      onPressed:
+                          tienePedido ? () => _finalizarPedido(context) : null,
+                      style: ElevatedButton.styleFrom(
+                          elevation: 5,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: defaultPadding / 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  defaultBorderRadious * 3.5)),
+                          backgroundColor: errorColor),
+                      child: Text(
+                        'Finalizar',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(color: superColor),
+                      )),
                 ],
               ),
             ),
@@ -124,31 +165,27 @@ class MesaCard extends StatelessWidget {
   }
 
   Future<void> _finalizarPedido(BuildContext context) async {
-    final apiService = ApiService();
-    final websocketService = WebsocketService();
+    final enTiendaService =
+        Provider.of<EnTiendaService>(context, listen: false);
+    final websocketService =
+        Provider.of<WebsocketService>(context, listen: false);
 
     if (pedidoMesa.idPedido != null) {
       try {
-        // await apiService.finalizarPedido(pedidoMesa.idEnTienda!);
+        await enTiendaService.finalizarPedido(pedidoMesa.idEnTienda!);
+        websocketService.emit("pedido-finalizado");
 
-        // Emitir el evento al WebSocket
-        websocketService.emit(
-            "pedido-finalizado"); //HAY ERROR CON EL FORMATO JSON DE RESPONSE
-
-        // Mostrar mensaje de éxito
         showDialog(
           context: context,
-          barrierDismissible:
-              false, // Evita que el usuario lo cierre antes de tiempo
+          barrierDismissible: false,
           builder: (BuildContext context) {
             Future.delayed(const Duration(seconds: 2), () {
-              Navigator.of(context)
-                  .pop(); // Cierra automáticamente después de 2 segundos
+              Navigator.of(context).pop();
             });
 
             return AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15), // Bordes redondeados
+                borderRadius: BorderRadius.circular(15),
               ),
               title: const Text(
                 "¡Pedido Finalizado!",
@@ -158,22 +195,26 @@ class MesaCard extends StatelessWidget {
               content: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check_circle,
-                      color: Colors.green, size: 50), // Ícono de éxito
+                  Icon(Icons.check_circle, color: Colors.green, size: 50),
                   SizedBox(height: 10),
-                  Text(
-                    "Pedido enviado con éxito",
-                    textAlign: TextAlign.center,
-                  ),
+                  Text("Pedido enviado con éxito", textAlign: TextAlign.center),
                 ],
               ),
             );
           },
         );
 
-        onFinalizar?.call(); //  callback que recarga la lista.
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                const EntryPoint(initialIndex: 1), // Ir a MesasScreen
+          ),
+          (route) => false,
+        );
+
+        onFinalizar?.call();
       } catch (e) {
-        // Mostrar error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al finalizar el pedido: $e')),
         );

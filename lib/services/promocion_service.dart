@@ -7,38 +7,33 @@ import 'package:http/http.dart' as http;
 class PromocionService {
   List<PromocionModel> _cachedListPromotion = [];
 
-  Future<List<PromocionModel>> getAllPromotions(
-      {bool? activo, bool? disponible, int? idCategoria}) async {
-    // Si ya tenemos datos cacheados, devolvemos los cacheados
-    if (_cachedListPromotion.isNotEmpty) {
-      return _cachedListPromotion;
-    }
+  Future<List<PromocionModel>> getAllPromotions({
+    bool? activo,
+    bool? disponible,
+    int? idCategoria,
+  }) async {
+    if (_cachedListPromotion.isNotEmpty) return _cachedListPromotion;
 
-    // Construir la URL con los parámetros opcionales
-    Uri url = Uri.parse(ApiConstants.promocion);
-    final queryParams = <String, String>{};
+    final uri = Uri.parse(ApiConstants.promocion).replace(
+      queryParameters: {
+        if (activo != null) 'activo': activo.toString(),
+        if (disponible != null) 'disponible': disponible.toString(),
+        if (idCategoria != null) 'idCategoria': idCategoria.toString(),
+      },
+    );
 
-    if (activo != null) queryParams['activo'] = activo.toString();
-    if (disponible != null) queryParams['disponible'] = disponible.toString();
-    if (queryParams.isNotEmpty) {
-      url = url.replace(queryParameters: queryParams);
-    }
+    try {
+      final response = await http.get(uri);
 
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      try {
+      if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        _cachedListPromotion = data
-            .map((promocion) => PromocionModel.fromJson(promocion))
-            .toList();
-        return _cachedListPromotion;
-      } catch (e) {
-        throw Exception('Error al procesar la respuesta: $e');
+        return _cachedListPromotion =
+            data.map((json) => PromocionModel.fromJson(json)).toList();
+      } else {
+        throw Exception('Error al obtener promociones: ${response.statusCode}');
       }
-    } else {
-      throw Exception(
-          'Error al obtener los productos de la categoria: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
     }
   }
 }

@@ -1,16 +1,14 @@
-import 'dart:convert';
-
 import 'package:riccos/core/api_constants.dart';
 import 'package:riccos/models/categoria_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:riccos/services/auth_service.dart';
 
 class CategoriaService {
   final AuthService authService;
+  final Dio _dio = Dio();
+  List<CategoriaModel> _cachedList = [];
 
   CategoriaService(this.authService);
-
-  List<CategoriaModel> _cachedList = [];
 
   Future<List<CategoriaModel>> getAllActive(
       {bool? activo, bool? disponible}) async {
@@ -19,28 +17,35 @@ class CategoriaService {
       return _cachedList;
     }
 
-    // Construir la URL con los parámetros opcionales
-    final url = Uri.parse(ApiConstants.categoria);
-    final queryParams = <String, String>{};
+    final token = await authService.getToken();
 
-    if (activo != null) queryParams['activo'] = activo.toString();
-    if (disponible != null) queryParams['disponible'] = disponible.toString();
+    try {
+      final response = await _dio.get(
+        ApiConstants.categoria,
+        queryParameters: {
+          if (activo != null) 'activo': activo.toString(),
+          if (disponible != null) 'disponible': disponible.toString(),
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
 
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      try {
-        final List<dynamic> data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
         _cachedList = data
             .map((categoria) => CategoriaModel.fromJson(categoria))
             .toList();
         return _cachedList;
-      } catch (e) {
-        throw Exception('Error al procesar la respuesta: $e');
+      } else {
+        throw Exception(
+            'Error al obtener categorías activas: ${response.statusCode}');
       }
-    } else {
-      throw Exception(
-          'Error al obtener categorías activas: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error en la solicitud: $e');
     }
   }
 }

@@ -2,8 +2,8 @@
 
 class ApiConstants {
   // Definir el dominio base
-  //static const String dominio = "https://riccos.somee.com/";
-  static const String dominio = "https://192.168.100.115:45455/";
+  static const String dominio = "https://riccos.somee.com/";
+  //static const String dominio = "https://192.168.100.115:45455/";
   //static const String dominio = "https://localhost:7063/";
 
   // Definir las rutas de los endpoints
@@ -18,4 +18,5 @@ class ApiConstants {
   static const String enTienda = "${dominio}api/EnTienda/";
   static const String promocion = "${dominio}api/Promocion/";
   static const String personalEmpresa = "${dominio}api/PersonalEmpresa/";
+  static const String usuarioSistema = "${dominio}api/UsuarioSistema/";
 }

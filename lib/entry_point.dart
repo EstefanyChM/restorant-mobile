@@ -34,12 +34,16 @@ class _EntryPointState extends State<EntryPoint> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Módulo de Pedidos'),
+          title: const Text(
+            'Módulo de Pedidos',
+            style: TextStyle(color: tertiaryColor, fontSize: 30),
+          ),
           backgroundColor: secondaryColor,
+          centerTitle: true, // Centra el título
         ),
         body: Column(
           children: [
-            //SectionConnection(), // Agregamos la sección de conexión
+            SectionConnection(), // Agregamos la sección de conexión
             Expanded(
               // Permite que el contenido principal ocupe el espacio restante
               child: PageTransitionSwitcher(
@@ -66,24 +70,39 @@ class _EntryPointState extends State<EntryPoint> {
               });
             }
           },
+          unselectedFontSize: 20,
           type: BottomNavigationBarType.fixed,
-          selectedFontSize: 12,
+          selectedFontSize: 20,
           selectedItemColor: secondaryColor,
-          unselectedItemColor: secondaryColorS,
+          unselectedItemColor: secondaryLight,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long),
-              activeIcon: Icon(Icons.receipt_long, color: secondaryColor),
+              icon: Icon(
+                Icons.receipt_long,
+              ),
+              activeIcon: Icon(
+                Icons.receipt_long,
+                color: secondaryColor,
+                size: 40,
+              ),
               label: "Mis Pedidos",
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.table_bar_outlined),
-              activeIcon: Icon(Icons.table_bar_outlined, color: secondaryColor),
+              activeIcon: Icon(
+                Icons.table_bar_outlined,
+                color: secondaryColor,
+                size: 40,
+              ),
               label: "Mesas",
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person, color: secondaryColor),
+              activeIcon: Icon(
+                Icons.person,
+                color: secondaryColor,
+                size: 40,
+              ),
               label: "Mi Perfil",
             ),
           ],

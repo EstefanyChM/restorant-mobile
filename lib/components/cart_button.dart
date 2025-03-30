@@ -22,13 +22,13 @@ class CartButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             horizontal: defaultPadding, vertical: defaultBorderRadious / 2),
         child: SizedBox(
-          height: 64,
+          height: 100,
           child: Material(
-            color: tertiaryColorS,
+            color: secondaryLight,
             clipBehavior: Clip.hardEdge,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
-                Radius.circular(defaultBorderRadious),
+                Radius.circular(defaultBorderRadious * 5),
               ),
             ),
             child: InkWell(
@@ -36,7 +36,7 @@ class CartButton extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    flex: 4,
+                    flex: 3,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: defaultPadding),
@@ -44,22 +44,37 @@ class CartButton extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            "S/. ${price.toStringAsFixed(2)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(
-                                    fontSize: 28,
-                                    fontWeight:
-                                        FontWeight.bold, // Hacerlo más grueso
-                                    color: tertiaryColor),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'S./ ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryLight,
+                                      ),
+                                ),
+                                TextSpan(
+                                  text: price
+                                      .toStringAsFixed(2), // Valor por defecto
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineLarge!
+                                      .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryColor,
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
                           Text(
                             subTitle,
                             style: const TextStyle(
-                              color: primaryColor,
-                            ),
+                                color: primaryColor, fontSize: 15),
                           )
                         ],
                       ),
@@ -70,15 +85,15 @@ class CartButton extends StatelessWidget {
                     child: Container(
                       alignment: Alignment.center,
                       height: double.infinity,
-                      color: tertiaryColor,
+                      color: secondaryColor,
                       child: Row(
                         mainAxisSize:
                             MainAxisSize.min, // Ajusta el tamaño al contenido
                         children: [
                           const Icon(
                             Icons.add_shopping_cart,
-                            color: secondaryColorS,
-                            size: 40,
+                            color: primaryColor,
+                            size: 50,
                           ),
                           const SizedBox(
                               width: 8), // Espaciado entre el icono y el texto
@@ -86,8 +101,8 @@ class CartButton extends StatelessWidget {
                             title,
                             style: Theme.of(context)
                                 .textTheme
-                                .titleMedium!
-                                .copyWith(color: secondaryColorS),
+                                .headlineMedium!
+                                .copyWith(color: primaryColor),
                           ),
                         ],
                       ),

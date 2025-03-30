@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:riccos/components/mesas/mesa_card.dart';
+import 'package:riccos/constants.dart';
 import 'package:riccos/models/pedido_mesa_model.dart';
 import 'package:riccos/services/en_tienda_service.dart';
 
@@ -30,7 +31,7 @@ class _MesasScreenState extends State<MesasScreen> {
           child: Text(
             'Pedidos por Mesa',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 20,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -48,25 +49,21 @@ class _MesasScreenState extends State<MesasScreen> {
           } else {
             final pedidoMesas = snapshot.data!;
             return Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200.0,
-                  childAspectRatio: 0.75,
-                  mainAxisSpacing: 20.0, // Espaciado vertical entre tarjetas
-                  crossAxisSpacing: 20.0, // Espaciado horizontal entre tarjetas
-                ),
-                itemCount: pedidoMesas.length,
-                itemBuilder: (BuildContext context, int index) {
+              padding: const EdgeInsets.all(defaultPadding),
+              child: GridView.count(
+                crossAxisCount: 2, // Número de columnas
+                childAspectRatio: 0.95, // Proporción de los elementos
+                mainAxisSpacing:
+                    defaultPadding, // Espaciado vertical entre elementos
+                crossAxisSpacing:
+                    defaultPadding, // Espaciado horizontal entre elementos
+                children: List.generate(pedidoMesas.length, (index) {
                   final pedidoMesa = pedidoMesas[index];
                   return MesaCard(
                     pedidoMesa: pedidoMesa,
                     //onFinalizar: _refreshPedidoMesaList,
                   );
-                },
+                }),
               ),
             );
           }

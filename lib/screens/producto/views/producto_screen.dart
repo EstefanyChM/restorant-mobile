@@ -13,10 +13,14 @@ import '../../../constants.dart';
 
 class ProductoScreen extends StatefulWidget {
   final int idCategoria;
+  final String nombreCategoria;
   final PedidoMesaModel pedidoMesa;
 
   const ProductoScreen(
-      {super.key, required this.idCategoria, required this.pedidoMesa});
+      {super.key,
+      required this.idCategoria,
+      required this.nombreCategoria,
+      required this.pedidoMesa});
 
   @override
   ProductoScreenState createState() => ProductoScreenState();
@@ -60,11 +64,10 @@ class ProductoScreenState extends State<ProductoScreen> {
           stock: promocion.stock,
           nombre: promocion.nombre,
           descripcion: promocion.descripcion,
-          disponibilidad:
-              true, // Considera el valor apropiado para la disponibilidad
-          estado: true, // Considera el valor apropiado para el estado
+          disponibilidad: true,
+          estado: true,
           precio: promocion
-              .total, // Aquí puedes calcular el precio de alguna manera si es necesario
+              .total, // calcular el precio de alguna manera si es necesario
           idCategoria: widget
               .idCategoria, // Puede ser el mismo que el de la categoría de la promoción
           categoriaNombre:
@@ -89,52 +92,78 @@ class ProductoScreenState extends State<ProductoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Seleccione un Producto'),
-      ),
-      body: FutureBuilder<List<ProductoModel>>(
-        future: //obtenerproductosDeLaCategoria(),
-            widget.idCategoria != 0
-                ? obtenerproductosDeLaCategoria()
-                : obtenerPromocionesConvertidosAProductos(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No hay productos disponibles.'));
-          } else {
-            final productos = snapshot.data!;
-            return Padding(
-              padding: const EdgeInsets.all(defaultPadding),
-              child: GridView.count(
-                crossAxisCount: 2, // Número de columnas
-                childAspectRatio: 0.85, // Relación de aspecto de las tarjetas
-                children: List.generate(
-                  productos.length,
-                  (index) {
-                    final producto = productos[index];
-                    return ProductoCard(
-                      producto: producto,
-                      press: () {
-                        customModalBottomSheet(
-                          context,
-                          child: ProductoDetallesScreen(
-                              producto: producto,
-                              pedidoMesa: widget.pedidoMesa,
-                              esPromocion:
-                                  widget.idCategoria == 0 ? true : false),
-                        );
-                      },
-                    );
-                  },
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: tertiaryLight,
+          title: const Text(
+            'Volver a mesas',
+            style: TextStyle(color: primaryColor, fontSize: 30),
+          ),
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(defaultPadding / 2),
+              child: Center(
+                child: Text(
+                  widget.nombreCategoria,
+                  style: const TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
                 ),
               ),
-            );
-          }
-        },
+            ),
+            Expanded(
+              child: FutureBuilder<List<ProductoModel>>(
+                future: widget.idCategoria != 0
+                    ? obtenerproductosDeLaCategoria()
+                    : obtenerPromocionesConvertidosAProductos(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(
+                        child: Text('No hay productos disponibles.'));
+                  } else {
+                    final productos = snapshot.data!;
+                    return Padding(
+                      padding: const EdgeInsets.all(defaultPadding),
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1,
+                        children: List.generate(
+                          productos.length,
+                          (index) {
+                            final producto = productos[index];
+                            return ProductoCard(
+                              producto: producto,
+                              press: () {
+                                customModalBottomSheet(
+                                  context,
+                                  child: ProductoDetallesScreen(
+                                    producto: producto,
+                                    pedidoMesa: widget.pedidoMesa,
+                                    esPromocion: widget.idCategoria == 0,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

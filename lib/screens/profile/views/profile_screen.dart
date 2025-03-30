@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:riccos/constants.dart';
-import 'package:riccos/models/personal_empresa_response_model.dart';
+import 'package:riccos/models/usuarios_sistema_response_model.dart';
 import 'package:riccos/route/screen_export.dart';
-import 'package:riccos/services/personal_empresa_service.dart';
+import 'package:riccos/services/usuario_sistema_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'components/profile_card.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,24 +14,23 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late PersonalEmpresaService _personalEmpresaService;
+  late UsuarioSistemaService _personalEmpresaService;
 
   @override
   void initState() {
     super.initState();
     _personalEmpresaService =
-        Provider.of<PersonalEmpresaService>(context, listen: false);
+        Provider.of<UsuarioSistemaService>(context, listen: false);
   }
 
-  Future<PersonalEmpresaResponseModel?> _fetchUserData() async {
-    // Replace with your actual user ID retrieval logic
+  Future<UsuariosSistemaResponseModel?> _fetchUserData() async {
     try {
-      final PersonalEmpresaResponseModel userData =
-          await _personalEmpresaService.getUsuarioSistema();
+      final UsuariosSistemaResponseModel userData =
+          await _personalEmpresaService.obtenerUsuarioSistema();
       return userData;
     } catch (e) {
       print('Error fetching user data: $e');
-      return null; // Handle errors gracefully (e.g., show a snackbar)
+      return null;
     }
   }
 
@@ -50,53 +47,180 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          FutureBuilder<PersonalEmpresaResponseModel?>(
-            future: _fetchUserData(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final userData = snapshot.data!;
-                return ProfileCard(
-                  name: userData.nombre!,
-                  email:
-                      userData.email!, // Assuming 'email' exists in the model
-                  imageSrc:
-                      //"https://www.thefamouspeople.com/profiles/images/joe-alwyn-4.jpg",
-                      "https://us.123rf.com/450wm/asmati/asmati1701/asmati170103397/70513388-ilustraci%C3%B3n-de-signo-de-usuario-icono-naranja-con-la-ruta-de-sombra-de-estilo-plano.jpg",
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text('Error: ${snapshot.error}'),
-                );
-              }
-              // Display a loading indicator while fetching data
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
+      body: FutureBuilder<UsuariosSistemaResponseModel?>(
+        future: _fetchUserData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('No se encontraron datos'));
+          }
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-            child: Text(
-              "Mi cuenta",
-              style: Theme.of(context).textTheme.titleSmall,
+          final userData = snapshot.data!;
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      height: 180,
+                      decoration: BoxDecoration(
+                        // Quita "const" porque primaryMaterialColor no es constante
+                        gradient: LinearGradient(
+                          colors: [
+                            primaryMaterialColor[
+                                50]!, // Usa "!" para asegurar que no sea null
+                            primaryMaterialColor[900]!,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 50,
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(
+                          "https://us.123rf.com/450wm/asmati/asmati1701/asmati170103397/70513388-ilustraci%C3%B3n-de-signo-de-usuario-icono-naranja-con-la-ruta-de-sombra-de-estilo-plano.jpg",
+                        ),
+                        backgroundColor: Colors.transparent, // Opcional
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
+                Text(
+                  "${userData.nombre} ${userData.apellidos}",
+                  style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor),
+                ),
+                Text(
+                  userData.email,
+                  style: const TextStyle(color: primaryColor, fontSize: 20),
+                ),
+                const SizedBox(height: 20),
+                Card(
+                  color: whiteColor,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        _buildProfileInfo(
+                            Icons.phone, "Celular", userData.celular),
+                        _buildProfileInfo(
+                            Icons.calendar_today,
+                            "Fecha de Nacimiento",
+                            "${userData.fechaNacimiento.toLocal()}"
+                                .split(' ')[0]),
+                        _buildProfileInfo(Icons.location_on, "Dirección",
+                            userData.direccion ?? "No registrada"),
+                        _buildProfileInfo(Icons.badge, "Documento",
+                            "${userData.numeroDocumento} (${userData.idPersonaTipoDocumento})"),
+                        _buildProfileInfo(Icons.verified_user, "Estado",
+                            userData.estadoDescripcion),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: defaultPadding),
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, editProfileScreenRoute,
+                              arguments: userData);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: warningColor,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          "Editar Datos",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await logout();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: errorColor,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          "Cerrar Sesión",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: defaultPadding / 2),
+          );
+        },
+      ),
+    );
+  }
 
-          // Log Out
-          ListTile(
-            onTap: () async {
-              await logout();
-            },
-            minLeadingWidth: 24,
-            leading: const Icon(Icons.logout,
-                size: 24, color: Colors.red), // Ícono rojo
-            title: const Text(
-              "Cerrar Sesión",
-              style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold), // Texto rojo y en negrita
+  Widget _buildProfileInfo(IconData icon, String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(icon, color: tertiaryColor),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
             ),
           ),
         ],

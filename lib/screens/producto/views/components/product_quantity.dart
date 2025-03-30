@@ -42,29 +42,34 @@ class _ProductQuantityState extends State<ProductQuantity> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Text(
           "Cantidad",
           style: TextStyle(
             color: tertiaryColor,
-            fontSize: 18,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
+        ),
+        SizedBox(
+          height: defaultPadding,
         ),
         Row(
           children: [
             SizedBox(
-              height: 40,
-              width: 40,
+              height: 60,
+              width: 60,
               child: OutlinedButton(
                 onPressed: onDecrement, // Llamada a la función de decremento
                 style: OutlinedButton.styleFrom(
+                    shape: const OvalBorder(),
                     padding: const EdgeInsets.all(defaultPadding / 2),
                     side: BorderSide.none,
-                    backgroundColor: Colors.red[300]),
+                    backgroundColor: errorColor),
                 child: const Icon(
                   Icons.remove,
+                  size: 30,
                   color: Colors.white,
                 ),
               ),
@@ -83,18 +88,20 @@ class _ProductQuantityState extends State<ProductQuantity> {
               ),
             ),
             SizedBox(
-              height: 40,
-              width: 40,
+              height: 60,
+              width: 60,
               child: OutlinedButton(
                 onPressed: onIncrement, // Llamada a la función de incremento
                 style: OutlinedButton.styleFrom(
+                    shape: const OvalBorder(),
                     padding: const EdgeInsets.all(defaultPadding / 2),
                     side: BorderSide.none,
-                    backgroundColor: Colors.green[300]),
+                    backgroundColor: successColor),
 
                 child: const Icon(
                   Icons.add,
                   color: Colors.white,
+                  size: 30,
                 ),
               ),
             ),

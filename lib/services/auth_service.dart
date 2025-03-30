@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:riccos/core/api_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:dio/dio.dart';
+
 class AuthService with ChangeNotifier {
+  final Dio dio = Dio(); // Instancia de Dio
+
   Future<void> _saveToPrefs(String key, dynamic value) async {
     final prefs = await SharedPreferences.getInstance();
     if (value is String) {
@@ -26,19 +29,18 @@ class AuthService with ChangeNotifier {
 
   Future<Map<String, dynamic>?> login(String email, String password,
       {bool esPersonal = true}) async {
-    final url =
-        Uri.parse('${ApiConstants.authUser}login?esPersonal=$esPersonal');
+    final url = '${ApiConstants.authUser}login?esPersonal=$esPersonal';
+
     try {
-      final response = await http.post(
+      final response = await dio.post(
         url,
-        headers: {"Content-Type": "application/json"},
-        //body: jsonEncode({'email': email, 'password': password}),
-        body:
+        options: Options(headers: {"Content-Type": "application/json"}),
+        data:
             jsonEncode({'email': 'mozo_1@riccos.com', 'password': 'aA123456!'}),
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.data; // Dio ya convierte automáticamente a JSON
         final token = data['token'];
         final idUsuario = data['idUsuario'];
 
